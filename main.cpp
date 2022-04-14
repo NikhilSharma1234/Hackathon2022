@@ -3,6 +3,6 @@
 using namespace std;
 
 int main() {
-    system("python \"c:/Users/nikhi/Desktop/Email App/C-Pyth/scripts.py\"");
+    system("python \"c:/Users/nikhi/Desktop/Email App/Hackathon/scripts.py\"");
     return 0;
 }

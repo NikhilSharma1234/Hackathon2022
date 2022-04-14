@@ -1,5 +1,5 @@
 from concurrent.futures import process
-import imaplib
+import imaplib, getpass
 import email
 from email.header import decode_header
 import webbrowser
@@ -7,8 +7,8 @@ import os
 
 
 # account credentials
-username = "email"
-password = "pass"
+username = "hackathontest22@gmail.com"
+
 
 def clean(text):
     # clean text for creating a folder
@@ -16,6 +16,7 @@ def clean(text):
 # create an IMAP4 class with SSL 
 imap = imaplib.IMAP4_SSL("imap.gmail.com")
 # authenticate
+password = getpass.getpass("Enter your Password: ")
 imap.login(username, password)
 
 status, messages = imap.select("INBOX")
@@ -76,18 +77,18 @@ for i in range(messages, messages-N, -1):
                 if content_type == "text/plain":
                     # print only text email parts
                     print(body)
-#            if content_type == "text/html":
-#                # if it's HTML, create a new HTML file and open it in browser
-#                folder_name = clean(subject)
-#                if not os.path.isdir(folder_name):
-#                    # make a folder for this email (named after the subject)
-#                    os.mkdir(folder_name)
-#                filename = "index.html"
-#                filepath = os.path.join(folder_name, filename)
-#                # write the file
-#                open(filepath, "w").write(body)
-#                # open in the default browser
-#                webbrowser.open(filepath)
+            if content_type == "text/html":
+                # if it's HTML, create a new HTML file and open it in browser
+                folder_name = clean(subject)
+                if not os.path.isdir(folder_name):
+                    # make a folder for this email (named after the subject)
+                    os.mkdir(folder_name)
+                filename = "index.html"
+                filepath = os.path.join(folder_name, filename)
+                # write the file
+                open(filepath, "w").write(body)
+                # open in the default browser
+                webbrowser.open(filepath)
             print("="*100)
 # close the connection and logout
 imap.close()
