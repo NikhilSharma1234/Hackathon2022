@@ -17,6 +17,7 @@ using std::cout; using std::endl;
 using std::string; using std::vector;
 using std::map; using std::pair;
 using std::fstream; using std::ofstream;
+using std::ifstream;
 using namespace boost::filesystem;
 
 //void getFiles(vector<string>& files);
@@ -25,26 +26,10 @@ void fillMap(map<string, int>& flagWords, string filename);
 
 void markSender(string sender);
 
+string getSender(string filename);
+
 int main(){
-    map<string, int> newFlagWords;
-    map<string, int> neutralWords;
-    map<string, int> flagWords;
-    string word = "lego";
-    
-    newFlagWords.insert(pair<string, int>(word, 1));
-    
-    if(neutralWords[word]){}
-    
-    else if(flagWords[word]){}
-    
-    else if(newFlagWords[word]){
-        newFlagWords[word]++;
-    }
-    
-    else{
-        newFlagWords.insert(pair<string, int>(word, 1));
-    }
-    cout << newFlagWords["lego"] << endl;
+    cout << getSender("hi.txt") << endl;
     //map<string, int> flagWords;
     //flagWords.insert(pair<string, int>("free", 1));
     //fillMap(flagWords, "flagwords.txt");
@@ -52,6 +37,18 @@ int main(){
     //cout << findInMap(flagWords, "free", tester.txt) << endl;
     return 0;
     
+}
+
+string getSender(string filename){
+    string sender;
+    filename = "Inbox/" + filename;
+    ifstream myfile(filename);
+    if (myfile.fail()) {
+        cout << "could not open file" << endl;
+        exit(1);
+    }
+    getline(myfile, sender, '<');
+    return sender;
 }
 
 void fillMap(map<string, int>& flagWords, string filename){
