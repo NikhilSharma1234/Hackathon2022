@@ -15,12 +15,13 @@ using std::ifstream; using std::hash;
 using namespace boost::filesystem;
 
 //add words that are associated with spam
-void addWords(map<string, int>& SpamWords, map<string, int>& neutralWords, map<string, int>& potentialFlags, string filename);
-
-void forRealThisTime(map<string, int> SpamWords, map<string, int>& potentialFlags);
+void addWords(map<string, int>& SpamWords, map<string, int>& neutralWords, vector<string>& potentialFlags, string filename);
 
 //fill maps with words from text file
 void fillMap(map<string, int>& flagWords, string filename);
+
+//iterate through potential flags and add to SpamWords
+void forRealThisTime(map<string, int> SpamWords, vector<string>& potentialFlags);
 
 //get the file names from inbox
 void getFiles(vector<string>& files);
@@ -32,16 +33,17 @@ string getSender(string filename);
 void markSender(string sender);
 
 //read the email and return the percent of spam associated words
-double readEmail(map<string, int>& flagWords, map<string, int>& neutralWords, map<string, int>& potentialFlags, string& filename, string & sender);
+double readEmail(map<string, int>& flagWords, map<string, int>& neutralWords, string& filename, string & sender);
 
 int main() {
+    system("python3.9 my_scripts.py");
     //set the percentage of spam words to mark as spam
     int threshhold = 1;
     //set the maps for the word sets
     map<string, int> Spamwords;
     map<string, int> neutralWords;
     map<string, int> spamSenders;
-    map<string, int> potentialFlags;
+    vector<string> potentialFlags;
     fillMap(spamSenders, "spamSenders.txt");
     fillMap(Spamwords, "flagwords.txt");
     fillMap(neutralWords, "neutralwords.txt");
@@ -55,15 +57,17 @@ int main() {
     string sender;
     //map<string, int>:: iterator var;
     
-    system("python3.9 my_scripts.py");
+    
 
     for(int i = 0; i < files.size(); i++){
         sender = getSender(files[i]);
+
         if(spamSenders.count(sender) > 0){
+
             //call function to add bad words on this email
         }
         else{
-            percentage = readEmail(Spamwords, neutralWords, potentialFlags, files[i], sender);
+            percentage = readEmail(Spamwords, neutralWords, files[i], sender);
             
             if(percentage >= threshhold){
                 cout << "Your email from " << sender << " has a spam word percentage of " << percentage << "%" << endl;
@@ -71,6 +75,8 @@ int main() {
                 spamSenders.insert(pair<string, int> (sender, 1)); //add sender to map of spamsenders
                 
                 addWords(Spamwords, neutralWords, potentialFlags, files[i]);//call read bademail function
+                forRealThisTime(Spamwords, potentialFlags);
+                
             }
         }
     }
@@ -79,47 +85,71 @@ int main() {
     return 0;
 }
 
-void addWords(map<string, int>& SpamWords, map<string, int>& neutralWords, map<string, int>& potentialFlags, string filename){
-    string sender, email, line;
-    
-    ifstream myfile(filename);
-    if (myfile.fail()) {
-        cout << "could not open file" << endl;
-        exit(1);
-    }
-    getline(myfile, sender, '<');
-    getline(myfile, email);
-    email.pop_back();
-    
-    while (!myfile.eof()) {
-    
-    //myfile.get(); // get blank space
-    getline(myfile, line);
-     //cout << "from email " << line << endl;
-    int len = line.size();
-        while(len > 0) { // identify all individual strings
-        string sub;
-        len = line.find(" ");
-            if (len > 0) {
-                sub = line.substr(0, len);
-                line = line.substr(len + 1, line.size());
-            }
-            else {
-                sub = line;
-            }
-            if(neutralWords.count(sub) > 0 || SpamWords.count(sub) > 0){
-            }
-    
-            if(potentialFlags.count(sub) > 0){
-                potentialFlags[sub]++;
-            }
-            else{
-                potentialFlags.insert(pair<string, int>(sub, 1));
-            }
-                 
+void addWords(map<string, int>& SpamWords, map<string, int>& neutralWords, vector<string>& potentialFlags, string filename){
+    ifstream file;
+    file.open (filename);
+    if (!file.is_open()) return;
+
+    string sub;
+    while (file >> sub)
+    {
+        if(neutralWords.count(sub) > 0 || SpamWords.count(sub) > 0 || count(potentialFlags.begin(), potentialFlags.end(), sub) > 0){
         }
-    myfile.close();
+        // else if(potentialFlags.count(sub) > 0){
+            
+        // }
+        else{
+            potentialFlags.push_back(sub);
+        }
     }
+    // string sender, email, line;
+    // int count = 0;
+    
+    // ifstream myfile(filename);
+    // if (myfile.fail()) {
+    //     cout << "could not open file" << endl;
+    //     exit(1);
+    // }
+    // getline(myfile, sender, '<');
+    // getline(myfile, email);
+    // email.pop_back();
+    // myfile >> line;
+    
+    // while (!myfile.eof()) {
+    
+    // //myfile.get(); // get blank space
+    // getline(myfile, line);
+    //  //cout << "from email " << line << endl;
+    // int len = line.size();
+    //     while(len > 0) { // identify all individual strings
+        
+    //     len = line.find(" ");
+    //         if (len > 0) {
+    //             sub = line.substr(0, len);
+    //             line = line.substr(len + 1, line.size());
+    //             cout << "in if" << endl;
+    //             cout << sub << " " << count << endl;
+    //             count++;
+    //         }
+    //         else {
+    //             sub = line;
+    //             cout << "in else" << endl;
+    //             cout << sub << " " << count << endl;
+    //             count++;
+    //         }
+    //         // if(neutralWords.count(sub) > 0 || SpamWords.count(sub) > 0){
+    //         // }
+    
+    //         // if(potentialFlags.count(sub) > 0){
+    //         //     potentialFlags[sub]++;
+    //         // }
+    //         // else{
+    //         //     potentialFlags.insert(pair<string, int>(sub, 1));
+    //         // }
+                 
+    //     }
+    // myfile.close();
+    //}
 }
     // for ( const auto &myPair : potentialFlags ) {
     //     SpamWords.insert(pair<string, int>(myPair.first, 1));
@@ -141,6 +171,17 @@ void fillMap(map<string, int>& flagWords, string filename){
         
     }
     file.close();
+}
+
+void forRealThisTime(map<string, int> SpamWords, vector<string>& potentialFlags){
+    ofstream myfile;
+    myfile.open ("flagwords.txt", std::ios_base::app);
+    
+    
+    for(int i = 0; i < potentialFlags.size(); i++){
+        myfile << potentialFlags[i] << "\n";
+    }
+   myfile.close();
 }
 
 void getFiles(vector<string>& files){
@@ -181,7 +222,7 @@ void markSender(string sender){
     myfile.close();
 }
 
-double readEmail(map<string, int>& flagWords, map<string, int>& neutralWords, map<string, int>& potentialFlags, string& filename, string & email){
+double readEmail(map<string, int>& flagWords, map<string, int>& neutralWords, string& filename, string & email){
     string name, line, sender;
     double count = 0;
     double total = 0;
@@ -196,10 +237,11 @@ double readEmail(map<string, int>& flagWords, map<string, int>& neutralWords, ma
     getline(myfile, sender, '<');
     getline(myfile, email);
     email.pop_back();
+    myfile >> line;
     
     while (!myfile.eof()) {
     
-    //myfile.get(); // get blank space
+    myfile.get(); // get blank space
     getline(myfile, line);
      //cout << "from email " << line << endl;
     int len = line.size();
@@ -215,15 +257,19 @@ double readEmail(map<string, int>& flagWords, map<string, int>& neutralWords, ma
                 sub = line;
                 total++;
             }
+            // myfile >> line;
+            // total ++;
              if(flagWords.count(sub) > 0){
                  count++;
+                 
              }
              else {
              }
+                
 
-        }
+        }  
     }
     
-   
+
     return (count / total) * 100.0;
 }
