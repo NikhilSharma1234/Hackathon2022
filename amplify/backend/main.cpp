@@ -123,8 +123,7 @@ string readEmail(map<int, string>& sWords, map<int, string>& words, int& count){
     getline(myfile, sender, '<');
     getline(myfile, email);
     cout << sender << " " << email << endl;
-    email.pop_back();
-      email.pop_back();
+   email.erase(email.end());
     while (!myfile.eof()) {
     
     myfile.get(); // get blank space

@@ -11,19 +11,15 @@ using std::cout; using std::endl;
 using std::string; using std::vector;
 using namespace boost::filesystem;
 
-void getFiles(vector<string>& files);
+//void getFiles(vector<string>& files);
 
 int main(){
-    vector<string> files;
-    getFiles(files);
-    for(int i=0; i < files.size(); i++){
-        cout << files[i] << endl;
-    }
+    cout << "hello world" << endl;
     return 0;
     
 }
 
-void getFiles(vector<string>& files){
+/*void getFiles(vector<string>& files){
     path p ("Inbox/");
 
     directory_iterator end_itr;
@@ -38,4 +34,4 @@ void getFiles(vector<string>& files){
             files.push_back(current_file);
         }
     }
-}
+}*/
