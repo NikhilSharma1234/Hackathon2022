@@ -70,13 +70,14 @@ int main() {
             percentage = readEmail(Spamwords, neutralWords, files[i], sender);
             
             if(percentage >= threshhold){
-                cout << "Your email from " << sender << " has a spam word percentage of " << percentage << "%" << endl;
+                cout << "Your email from " << sender << " has been marked as spam." << endl; 
                 markSender(sender);
                 spamSenders.insert(pair<string, int> (sender, 1)); //add sender to map of spamsenders
                 
                 addWords(Spamwords, neutralWords, potentialFlags, files[i]);//call read bademail function
                 forRealThisTime(Spamwords, potentialFlags);
-                
+                system("python3.9 move.py");
+                system("python3.9 uploadToS3.py");
             }
         }
     }
