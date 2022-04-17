@@ -6,12 +6,13 @@
 #include <bits/stdc++.h>
 #include <fstream>
 #include <map>
+#include <vector>
 using namespace std;
 using std::cout; using std::cin;
 using std::endl; using std::string;
 using std::map; using std::copy;
 using std::ifstream; using std::hash;
-using namespace boost::filesystem;
+ using namespace boost::filesystem;
 //read the txt file
 
 //create hash table for the no no words
@@ -23,32 +24,40 @@ using namespace boost::filesystem;
 //
 
 //get the file names from inbox
-void getFiles(string files[]);
+void getFiles(vector<string>& files);
 
 //put all of the words into an array
 void parseFile(map<int, string>& words) ;
 
-string readEmail(map<int, string>& sWords, map<int, string>& words, int count);
+string readEmail(map<int, string>& sWords, map<int, string>& words, int& count);
 
 
 
 int main() {
-    string files[10];
+    vector<string> files;
+    getFiles(files);
+    int wordCount = 0;
+    string sender;
+    map<int, string>:: iterator var;
     //string words[1000];
     map<int, string> Spamwords;
     map<int, string> words;
     
-    cout << "Jason" << endl;
-    getFiles(files);
+    
+    // getFiles(files);
     parseFile(Spamwords);
-    parseFile(words);
+    //parseFile(words);
+    sender = readEmail(Spamwords, words, wordCount);
+    //cout << "Name: " << sender << " spam word count: " << wordCount << endl;
+    
+    
+
+    
     //system("python3.9 my_scripts.py");
     return 0;
 }
 
-
-void getFiles(string files[]){
-    int count = 0;
+void getFiles(vector<string>& files){
     path p ("Inbox/");
 
     directory_iterator end_itr;
@@ -60,23 +69,24 @@ void getFiles(string files[]){
         if (is_regular_file(itr->path())) {
             // assign current file name to current_file and echo it out to the console.
             string current_file = itr->path().string();
-            files[count] = current_file;
-            count++;
+            files.push_back(current_file);
         }
     }
 }
 
 void parseFile(map<int, string>& words){
+    
     string name, line;
     int score;
     hash<string> hash_string;
     // cout << "Input a file name: ";
     // cin >> name;
-    ifstream myfile();
+    ifstream myfile("text.txt");
     if (myfile.fail()) {
         cout << "could not open file" << endl;
         exit(1);
     }
+   
     while (!myfile.eof()) {
     myfile >> score; // get score
     myfile.get(); // get blank space
@@ -93,23 +103,28 @@ void parseFile(map<int, string>& words){
                 sub = line.substr(0, line.size() - 1);
             }
          words[hash_string(sub)] = sub;// insert string with the score
+    
+        //cout << hash_string(sub) << endl;
         }
     }
 }
 
-string readEmail(map<int, string>& sWords, map<int, string>& words, int count){
+string readEmail(map<int, string>& sWords, map<int, string>& words, int& count){
     string name, line, sender, email;
     count = 0;
     hash<string> hash_string;
     // cout << "Input a file name: ";
     // cin >> name;
-    ifstream myfile();
+    ifstream myfile("tester.txt");
     if (myfile.fail()) {
         cout << "could not open file" << endl;
         exit(1);
     }
     getline(myfile, sender, '<');
     getline(myfile, email);
+    cout << sender << " " << email << endl;
+    email.pop_back();
+      email.pop_back();
     while (!myfile.eof()) {
     
     myfile.get(); // get blank space
