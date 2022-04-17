@@ -1,0 +1,23 @@
+gameplan
+
+fill all of the maps (neutral words, bad words)
+fillMap function
+
+get a list of all the emails, this is the getfiles function
+
+one at a time parse emails(for loop)
+readEmail function(badwordMap, filename, sender&), return percentage
+
+within parse see if bad words are in the emails
+
+return percentage at end
+
+if email is good, keep going
+
+if email is bad, update senders list, add to txt file, add the sender to maps
+
+if email is bad, give a count of all non-common, and non-already existant bad words
+
+readBadEmail(badwordmap, neutralWordMap, filename), return nothing
+find words that are not in badwordmap and not in neutralwordmap
+update the bad words map with these words

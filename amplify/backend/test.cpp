@@ -1,22 +1,59 @@
 //g++ test.cpp -lboost_system -lboost_filesystem -o email
 
+//"/Inbox" + filename
+
 #define BOOST_NO_CXX11_SCOPED_ENUMS
 #include <boost/filesystem.hpp>
 #undef BOOST_NO_CXX11_SCOPED_ENUMS
 #include <iostream>
 #include <string>
 #include <vector>
+#include <iterator>
+#include <map>
+#include <fstream>
+#include <bits/stdc++.h>
 
 using std::cout; using std::endl;
 using std::string; using std::vector;
+using std::map; using std::pair;
+using std::fstream; using std::ofstream;
 using namespace boost::filesystem;
 
 //void getFiles(vector<string>& files);
 
+void fillMap(map<string, int>& flagWords, string filename);
+
+void markSender(string sender);
+
 int main(){
-    cout << "hello world" << endl;
+    map<string, int> flagWords;
+    //flagWords.insert(pair<string, int>("free", 1));
+    fillMap(flagWords, "flagwords.txt");
+    cout << flagWords["lego"] << endl;
+    //cout << findInMap(flagWords, "free", tester.txt) << endl;
     return 0;
     
+}
+
+void fillMap(map<string, int>& flagWords, string filename){
+    fstream file;
+    file.open(filename.c_str());
+    string word;
+  
+    // extracting words from the file
+    while (file >> word)
+    {
+        flagWords.insert(pair<string, int>(word, 1));
+        
+    }
+    file.close();
+}
+
+void markSender(string sender){
+    ofstream myfile;
+    myfile.open ("spamSenders.txt");
+    myfile << sender << "\n";
+    myfile.close();
 }
 
 /*void getFiles(vector<string>& files){

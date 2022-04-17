@@ -63,6 +63,9 @@ for i in range(messages, messages-N, -1):
                         filepath = os.path.join(folder_name, filename)
                         open(filepath, "w").write(From)
                         open(filepath, "a").write('\n')
+                        open(filepath, "a").write('Subject: ')
+                        open(filepath, "a").write(subject)
+                        open(filepath, "a").write('\n')
                         open(filepath, 'a').write(body)
                     elif "attachment" in content_disposition:
                         # download attachment
@@ -81,6 +84,9 @@ for i in range(messages, messages-N, -1):
                     filename = (clean(subject) + ".txt")
                     filepath = os.path.join(folder_name, filename)
                     open(filepath, "w").write(From)
+                    open(filepath, "a").write('\n')
+                    open(filepath, "a").write('Subject: ')
+                    open(filepath, "a").write(subject)
                     open(filepath, "a").write('\n')
                     open(filepath, "a").write(body)
             print("="*100)
