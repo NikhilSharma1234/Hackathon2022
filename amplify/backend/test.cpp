@@ -26,10 +26,29 @@ void fillMap(map<string, int>& flagWords, string filename);
 void markSender(string sender);
 
 int main(){
+    map<string, int> newFlagWords;
+    map<string, int> neutralWords;
     map<string, int> flagWords;
+    string word = "lego";
+    
+    newFlagWords.insert(pair<string, int>(word, 1));
+    
+    if(neutralWords[word]){}
+    
+    else if(flagWords[word]){}
+    
+    else if(newFlagWords[word]){
+        newFlagWords[word]++;
+    }
+    
+    else{
+        newFlagWords.insert(pair<string, int>(word, 1));
+    }
+    cout << newFlagWords["lego"] << endl;
+    //map<string, int> flagWords;
     //flagWords.insert(pair<string, int>("free", 1));
-    fillMap(flagWords, "flagwords.txt");
-    cout << flagWords["lego"] << endl;
+    //fillMap(flagWords, "flagwords.txt");
+    //cout << flagWords["lego"] << endl;
     //cout << findInMap(flagWords, "free", tester.txt) << endl;
     return 0;
     

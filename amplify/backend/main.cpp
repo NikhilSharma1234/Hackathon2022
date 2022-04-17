@@ -12,16 +12,7 @@ using std::cout; using std::cin;
 using std::endl; using std::string;
 using std::map; using std::copy;
 using std::ifstream; using std::hash;
- using namespace boost::filesystem;
-//read the txt file
-
-//create hash table for the no no words
-
-//check the email for the no no words
-
-//if the email has too many no no words, mark it as spam
-
-//
+using namespace boost::filesystem;
 
 //get the file names from inbox
 void getFiles(vector<string>& files);
@@ -29,7 +20,7 @@ void getFiles(vector<string>& files);
 //put all of the words into an array
 //void parseFile(map<string, int>& words) ;
 
-double readEmail(map<string, int>& sWords, string& filename, string & sender);
+double readEmail(map<string, int>& flagWords, map<string, int>& neutralWords, map<string, int>& potentialFlags, string& filename, string & sender);
 
 void addWords(map<string, int>& sWords, map<string, int>& words);
 
@@ -38,13 +29,15 @@ void fillMap(map<string, int>& flagWords, string filename);
 void markSender(string sender);
 
 int main() {
+    int threshhold = 1;
     map<string, int> Spamwords;
     map<string, int> neutralWords;
     map<string, int> spamSenders;
+    map<string, int> potentialFlags;
     
-    fillMap(spamSenders, spamSenders.txt);
-    fillMap(Spamwords, flagwords.txt);
-    fillMap(neutralWords, neutralwords.txt);
+    fillMap(spamSenders, "spamSenders.txt");
+    fillMap(Spamwords, "flagwords.txt");
+    fillMap(neutralWords, "neutralwords.txt");
     
     vector<string> files;
     getFiles(files);
@@ -52,6 +45,7 @@ int main() {
     //double totalWord = 0;
     double percentage;
     string sender, filename;
+    ofstream SenderList;
     //map<string, int>:: iterator var;
     //string words[1000];
     
@@ -60,24 +54,32 @@ int main() {
     // getFiles(files);
     // parseFile(Spamwords);
     //parseFile(words);
-    
+
     for(int i = 0; i < files.size(); i++){
-        if(spamSenders[sender]){
+        
+        if(1 == 0){
             //call function to add bad words on this email
         }
         else{
-            percentage = readEmail(Spamwords, files[i], sender);
+            percentage = readEmail(Spamwords, neutralWords, potentialFlags, files[i], sender);
+            
             if(percentage >= threshhold){
-            //add sender to spamsenders list
-            //add sender to map of spamsenders
+            cout << "Your email from " << sender << " has a spam word percentage of " << percentage << "%" << endl;
+               
+                markSender(sender);
+                spamSenders.insert(pair<string, int> (sender, 1)); //add sender to map of spamsenders
+            
+            
             //call read bademail function
             }
         }
+        cout << sender << endl;
+        
     }
    
     
    
-    cout << "Your email has a spam percentage of " << percentage << "%" << endl;
+    
     
     
 
@@ -101,6 +103,13 @@ void getFiles(vector<string>& files){
             files.push_back(current_file);
         }
     }
+}
+
+void markSender(string sender){
+    ofstream myfile;
+    myfile.open ("spamSenders.txt", std::ios_base::app);
+    myfile << sender << "\n";
+    myfile.close();
 }
 
 void fillMap(map<string, int>& flagWords, string filename){
@@ -155,10 +164,10 @@ void fillMap(map<string, int>& flagWords, string filename){
         
 // }
 
-double readEmail(map<string, int>& sWords, string& filename, string& sender){
-    string name, line, sender, email;
-    int count = 0;
-    int total = 0;
+double readEmail(map<string, int>& flagWords, map<string, int>& neutralWords, map<string, int>& potentialFlags, string& filename, string & email){
+    string name, line, sender;
+    double count = 0;
+    double total = 0;
     hash<string> hash_string;
     
 
@@ -175,7 +184,7 @@ double readEmail(map<string, int>& sWords, string& filename, string& sender){
     
     //myfile.get(); // get blank space
     getline(myfile, line);
-    // cout << "from email " << line << endl;
+     //cout << "from email " << line << endl;
     int len = line.size();
         while(len > 0) { // identify all individual strings
         string sub;
@@ -189,20 +198,39 @@ double readEmail(map<string, int>& sWords, string& filename, string& sender){
                 sub = line;
                 total++;
             }
-            if(sWords.count(sub) > 0){
-                count++;
-            }
-            else {
-            }
+             if(flagWords.count(sub) > 0){
+                 count++;
+                    // if(neutralWords[sub] || flagWords[sub]){}
+    
+                    // else if(flagWords[sub]){}
+    
+                    // else if(potentialFlags[sub]){
+                    //     potentialFlags[sub]++;
+                    // }
+    
+                    // else{
+                    //     potentialFlags.insert(pair<string, int>(sub, 1));
+                    // }   
+                 
+             }
+             else {
+             }
+
         }
     }
     
-    
-    return count / total;
+    cout << "sender is " << sender << endl;
+    return (count / total) * 100.0;
 }
 
 void addWords(map<string, int>& sWords, map<string, int>& words){
-    
-    
-    
+    //neutral word map
+    //bad word map
+    //file name
+    //
+    //https://stackoverflow.com/questions/1443793/iterate-keys-in-a-c-map
+    // for ( const auto &myPair : newFlagWords ) {
+    //      flagWords.insert(<string, int>(myPari.first, 1));
+    // }
 }
+
